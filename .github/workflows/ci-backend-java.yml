@@ -7,7 +7,8 @@ on:
         description: "Docker TAG"
         required: true
         default: "main"
-        
+permissions:
+  contents: write # repo write permission update        
 jobs:
   build-and-push-backend-java-dev:
     runs-on: ubuntu-latest
@@ -64,6 +65,8 @@ jobs:
     - name: Update Kustomize Deployment with New Tag
     # 해당 위치에 내용 추가
       run: |
+        TAG="${{ github.event.inputs.name }}-${{ env.DATE_TAG }}"
+        sed -i "s|newTag: .*$|newTag: $TAG|g" gitops/backend-java/overlays/dev/kustomization.yaml
 
     - name: Commit and push changes
       run: |
